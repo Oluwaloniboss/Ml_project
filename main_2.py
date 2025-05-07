@@ -110,16 +110,16 @@ X_raw_train, X_raw_test, y_raw_train, y_raw_test = train_test_split(X_raw, y_raw
 # create an instance of the XGBClassifier model
 xgb_model_raw = XGBClassifier(scale_pos_weight = 30, random_state = 21)
 
-# create the GridSearchCV for lgbm
+# create the GridSearchCV for xgb model
 xgb_model_raw_grid = RandomizedSearchCV(xgb_model_raw, param_grid_xgb, cv = kf, n_jobs = -1) # type: ignore
 
-# fit the lgbm model with the raw train data
+# fit the xgb model with the raw train data
 xgb_model_raw_grid.fit(X_raw_train, y_raw_train)
 
-# predict the X_raw_test with the lgbm model
+# predict the X_raw_test with the xgb model
 y_raw_pred_xgb = xgb_model_raw_grid.predict(X_raw_test)
 
-# print the classification report of the LGBMClassifier model on the raw dataset
+# print the classification report of the XGBClassifier model on the raw dataset
 xgb_raw_classification_report = classification_report(y_raw_test, y_raw_pred_xgb)
 print(xgb_raw_classification_report)
 
@@ -127,7 +127,7 @@ print(xgb_raw_classification_report)
 xgb_raw_accuracy_score = accuracy_score(y_raw_test, y_raw_pred_xgb)
 print(xgb_raw_accuracy_score)
 
-# visualize the confusion matrix of the LGBMClassifier model on the raw dataset
+# visualize the confusion matrix of the XGBClassifier model on the raw dataset
 xgb_raw_conf_matrix = confusion_matrix(y_raw_test, y_raw_pred_xgb)
 print(xgb_raw_conf_matrix)
 xgb_raw_conf_matrix_display = ConfusionMatrixDisplay(confusion_matrix = xgb_raw_conf_matrix)
@@ -206,6 +206,7 @@ combined_conf_matrix_display.plot()
 plt.title("Combined Prediction model on the raw dataset")
 plt.show()
 
+# now carryout preprocessing
 # drop the Bankcrupt column since it is the target variable and every other column is the features variable
 x_data = dataset_2.drop(["Bankrupt?"], axis = 1)
 y_data = dataset_2["Bankrupt?"]
@@ -264,7 +265,7 @@ def visualize_high_correlation(df, threshold=0.85):
     plt.tight_layout()
     plt.show()
 
-# # call the function
+# call the function
 visualize_high_correlation(x_data, threshold = 0.85)
 
 # Compute correlation matrix
@@ -385,7 +386,7 @@ y_pred_xgb = xgb_model_grid.predict(X_test)
 # get the probabilites for the xgb_model
 y_probs_xgb = xgb_model_grid.predict_proba(X_test)
 
-# print the classification report of the LGBMClassifier model on the raw dataset
+# print the classification report of the XGBClassifier model on the preprocessed dataset
 xgb_classification_report = classification_report(y_test, y_pred_xgb)
 print(xgb_classification_report)
 
@@ -404,7 +405,7 @@ print("XGBoost Recall:", xgb_recall)
 print("XGBoost f1_score:", xgb_f1_score)
 print("XGBoost roc_auc_score:", xgb_roc_auc_score)
 
-# visualize the confusion matrix of the LGBMClassifier model on the raw dataset
+# visualize the confusion matrix of the XGBClassifier model on the preprocessed dataset
 xgb_conf_matrix = confusion_matrix(y_test, y_pred_xgb)
 print(xgb_conf_matrix)
 xgb_conf_matrix_display = ConfusionMatrixDisplay(confusion_matrix = xgb_conf_matrix)
@@ -428,7 +429,7 @@ y_pred_rf = rf_model_grid.predict(X_test)
 # get the probabilites for the rf_model
 y_probs_rf = rf_model_grid.predict_proba(X_test)
 
-# print the classification report of the RandomForestClassifier model on the raw dataset
+# print the classification report of the RandomForestClassifier model on the preprocessed dataset
 rf_classification_report = classification_report(y_test, y_pred_rf)
 print(rf_classification_report)
 
@@ -447,7 +448,7 @@ print("RandomForest Recall:", rf_recall)
 print("RandomForest f1_score:", rf_f1_score)
 print("RandomForest roc_auc_score:", rf_roc_auc_score)
 
-# visualize the confusion matrix of the RandomForestClassifier model on the raw dataset
+# visualize the confusion matrix of the RandomForestClassifier model on the preprocessed dataset
 rf_conf_matrix = confusion_matrix(y_test, y_pred_rf)
 print(rf_conf_matrix)
 rf_conf_matrix_display = ConfusionMatrixDisplay(confusion_matrix = rf_conf_matrix)
@@ -564,8 +565,8 @@ plt.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 
-# Define your scoring metric (use the same metric you optimized for)
-scoring_metric = 'f1'  # or 'accuracy', 'roc_auc', etc.
+# Define your scoring metric
+scoring_metric = 'f1' ]
 
 # Calculate learning curve
 train_sizes, train_scores, val_scores = learning_curve( # type: ignore
